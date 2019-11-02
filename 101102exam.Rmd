@@ -1,8 +1,8 @@
 ---
 title: "191102exam"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, echo = F}
@@ -272,10 +272,17 @@ Mia: Might mention that equity ratio stability seems to have exactly same distri
 
 As we have as much as xxx NA's, we choose not to delete these values, but rather impute them using the MICE package. 
 
-The tables below show how the distributions change when we apply different imputation methods. (Blue line: original data, ???)
+We deploy two methods for imputation: mean and ppm.
+Explain: 
+- ppm and why it is good
+- why imputation can introduce challenges 
+- 
 
 
-```{r}
+The tables below show how the distributions change when we apply different imputation methods. The original data is shown in the blue line, and the.
+
+
+```{r, include = FALSE}
 
 
 df_corp <- df_corp %>% 
@@ -283,15 +290,30 @@ df_corp <- df_corp %>%
 
 temp_imputed1 <- mice(df_corp, m=2,maxit=3,meth='mean',seed=500)
 
- # temp_imputed2 <- mice(df_corp, m=2,maxit=3,meth='pmm',seed=500)
+```
 
- # saveRDS(temp_imputed2, file = "impute.Rdata") # with m=3 and maxit = 3
 
-temp_imputed2 <- readRDS(file = "impute.Rdata")
+```{r, eval=FALSE}
+
+temp_imputed2 <- mice(df_corp, m=2,maxit=3,meth='pmm',seed=500)
+
+saveRDS(temp_imputed2, file = "impute.Rdata") # with m=3 and maxit = 3
+
 
 densityplot(temp_imputed1, drop.unused.levels = TRUE)
 
 densityplot(temp_imputed2, drop.unused.levels = TRUE)
+
+# Running the imputations and generating density plots of the imputed values is higly time consuming. Therefore, we upload the saved files and  plots instead. 
+```
+
+
+```{r}
+temp_imputed2 <- readRDS(file = "impute.Rdata")
+```
+
+
+```{r}
 
 # We complete the impution and check the result
 
@@ -329,7 +351,7 @@ table2 <- table(df_cleaned$default, df_cleaned$paid_debt_collection)
 
 ```
 
-After cleaning, imputing and restructuring our data, our data set is better suited for prediciton modelling. 
+After cleaning, imputing and restructuring our data set is better suited for prediciton modelling, see density plots below. 
 
 ```{r}
 summary(df_cleaned)
@@ -403,7 +425,8 @@ train_data <- train_data %>%
 ```
 # Dealing with data imbalance
 
-As mentioned, defaulting firms are highly underrepresentated in the data set. We deal with this by implementing an undersamlpling technique with the MICE package.
+As mentioned, defaulting firms are highly underrepresentated in the data set. We deal with this by implementing the oversamlpling technique "smote".
+- Writ some sentences about smote. 
 
 ```{r}
 
