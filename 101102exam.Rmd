@@ -267,8 +267,10 @@ temp_imputed2 <- readRDS(file = "impute.Rdata")
 
 complete_imputed <- complete(temp_imputed2, 1)
 
-dim(df_corp)
-dim(complete_imputed)
+Orginal <- dim(df_corp)
+Imputed <- dim(complete_imputed)
+
+xtable(rbind(Orginal, Imputed))
 
 df_cleaned <- complete_imputed
 
@@ -293,12 +295,14 @@ df_cleaned$unpaid_debt_collection <- as.factor(df_cleaned$unpaid_debt_collection
 table1 <- table(df_cleaned$default, df_cleaned$unpaid_debt_collection)
 table2 <- table(df_cleaned$default, df_cleaned$paid_debt_collection)
 
+xtable(table1)
+xtable(table2)
+
 ```
 
 After cleaning, imputing and restructuring our data set is better suited for prediciton modelling, see density plots below. 
 
 ```{r}
-summary(df_cleaned)
 
 # Looking at the distribution again
 
@@ -382,10 +386,7 @@ As mentioned, defaulting firms are highly underrepresentated in the data set. We
 
 ```{r}
 
-#Dealing with oversampling
-
-
-######################################### Making some models ########################################################
+############# Making some models ###################
 
 library(grid)
 
@@ -403,7 +404,6 @@ ctrl <- trainControl(method = "repeatedcv",
                      repeats = 10, 
                      verboseIter = FALSE,
                      sampling = "smote")
-
 
 ```
 
@@ -472,9 +472,6 @@ plot(result.roc, print.thres="best", print.thres.best.method="closest.topleft")
 
 result.coords <- coords(result.roc, "best", best.method="closest.topleft", ret=c("threshold", "accuracy"))
 print(result.coords)#to get threshold and accuracy
-
-
-{}
 
 
 ########################################### Model 2: Random Forest ######################################################
