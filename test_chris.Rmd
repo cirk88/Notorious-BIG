@@ -1,0 +1,43 @@
+---
+title: "test_chris"
+author: "Chris Kristiansen"
+date: "2 11 2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r}
+library(dplyr)
+library(magrittr)
+library(tidyr)
+library(ggplot2)
+library(Hmisc)
+library(purrr)
+library(caret)
+library(ranger)
+library(xgboost)
+library(kableExtra) # just to make the output nicer
+library(mice)
+library(stargazer)
+
+theme_set(theme_bw()) 
+
+df <- read.csv("pd_data_v2.csv", sep = ";", header = TRUE)
+
+df_corp <- df
+```
+
+```{r, results = 'asis'}
+stargazer(df_corp, summary.stat = c("min","max"))
+
+
+
+
+```
+
