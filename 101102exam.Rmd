@@ -28,6 +28,7 @@ library(xgboost)
 library(kableExtra) # just to make the output nicer
 library(mice)
 library(stargazer)
+library(xtable)
 
 theme_set(theme_bw()) 
 
@@ -46,21 +47,13 @@ Mia: make a nice summary table here
 
 ```{r}
 
-summary(df_corp)
-
 stargazer(df_corp, summary.stat = c("min","max"))
-
-str(df_corp)
 
 df_corp$default <- as.factor(df_corp$default) 
 
 df_corp %>% 
   ggplot(aes(x = default, fill = default)) +
   geom_bar()
-
-
-
-
 
 ```
 
@@ -71,25 +64,25 @@ The tables below show the distribution of the companies along the factor variabl
 
 ```{r}
 
-
 # Look at the distribution and recategorize the factor classes
 
 # Adverse_audit_opinion
 
-table(df_corp$default, df_corp$adverse_audit_opinion)
+
+xtable(table(df_corp$default, df_corp$adverse_audit_opinion))
 
 df_corp$adverse_audit_opinion <- 
   ifelse(df_corp$adverse_audit_opinion == 0, yes = 0, no = 1)
 
-table(df_corp$default, df_corp$adverse_audit_opinion) # If you got any Adverse audit opinons then its show as 1
+xtable(table(df_corp$default, df_corp$adverse_audit_opinion)) # If you got any Adverse audit opinons then its show as 1
 
 # Industry
 
-table(df_corp$default, df_corp$industry) # As we don't know anything about the type of industry we let it be
+xtable(table(df_corp$default, df_corp$industry)) # As we don't know anything about the type of industry we let it be
 
 # Payment_reminders
 
-table(df_corp$default, df_corp$payment_reminders) # Ok
+xtable(table(df_corp$default, df_corp$payment_reminders)) # Ok
 
 # Change classes
 
@@ -105,24 +98,7 @@ df_corp$age_of_company <- as.numeric(df_corp$age_of_company)
 ```
 Let's have a look of the distribution of the variables in the data set. The figure below contains density plots for all the numeric variables. Due to the presence of outliers, these figures do not provide much information. 
 
-```{r}
-
-# We now look on the numerical classes
-
-df_corp %>% 
-  select_if(is.numeric) %>% 
-  gather(metric, value) %>% 
-  ggplot(aes(value, fill = metric))+
-  geom_density(show.legend = FALSE) +
-  facet_wrap(~ metric, scales = "free")
-
-summary(df_corp)
-
-
-```
-
 #Handling missing observations and outliers
-
 
 We observe that the number xx appears throughout the data set, and assume that these are missing observations. In total, these extreme values account for xx percent of our observations. 
 
@@ -145,9 +121,9 @@ for(i in 1:ncol(x)){
     sum()
 }
 
-placeholder
+xtable(placeholder)
 
-placeholder/nrow(df_corp)
+xtable(placeholder/nrow(df_corp))
 
 # Changes the obvious errors to NA
 
@@ -158,16 +134,7 @@ df_corp[df_corp >  1000000000000000] <- NA
 
 ```{r}
 
-
-df_corp %>%
-  select_if(anyNA) %>% 
-  summary()
-
-x <- df_corp %>%
-  select_if(anyNA) %>% 
-  summary()
-
-
+stargazer(df_corp)
 
 ```
 
@@ -183,23 +150,13 @@ The figures below show the distribution after replacing xxx with NA. As shown, w
 # We take a new look after we changed the error with NA
 
 df_corp %>% 
-  select_if(is.numeric) %>% 
-  gather(metric, value) %>% 
-  ggplot(aes(value, fill = metric))+
-  geom_density(show.legend = FALSE) +
-  facet_wrap(~ metric, scales = "free")
-
-# We definitly need to do something about those outliers, only gross_operating_inc_perc and age_of_company looks to be okay.
-
-
-df_corp %>% 
   select(which(sapply(.,class)=="numeric"),default) %>%   
   gather(metric, value, -default) %>% 
   ggplot(aes(x= default, y=value, fill = default))+
   geom_boxplot(show.legend = FALSE) +
   facet_wrap(~ metric, scales = "free")
 
-
+# We definitly need to do something about those outliers, only gross_operating_inc_perc and age_of_company looks to be okay.
 
 ```
 
@@ -211,7 +168,7 @@ We assume that many of these values are error measurements. Applying a treshold 
 ```{r}
 
 
-############################################################ Dealing with the outliers ########################################################
+################## Dealing with the outliers ######################
 
 
 # Function for replacing outliers with NA's
@@ -234,7 +191,6 @@ df_corp$EBITDA_margin <- remove_outliers_na(df_corp$EBITDA_margin)
 df_corp$interest_coverage_ratio <- remove_outliers_na(df_corp$interest_coverage_ratio)
 df_corp$cost_of_debt <- remove_outliers_na(df_corp$cost_of_debt)
 df_corp$interest_bearing_debt <- remove_outliers_na(df_corp$interest_bearing_debt)
-
 df_corp$revenue_stability <- remove_outliers_na(df_corp$revenue_stability)
 df_corp$equity_ratio <- remove_outliers_na(df_corp$equity_ratio)
 df_corp$equity_ratio_stability <- remove_outliers_na(df_corp$equity_ratio_stability)
@@ -248,28 +204,6 @@ df_corp$amount_unpaid_debt <- remove_outliers_na(df_corp$amount_unpaid_debt)
 
 ```
 
-
-
-```{r}
-
-# Looking at the distribution again
-
-df_corp %>% 
-  select(which(sapply(.,class)=="numeric"),default) %>%   
-  gather(metric, value, -default) %>% 
-  ggplot(aes(x= default, y=value, fill = default))+
-  geom_boxplot(show.legend = FALSE) +
-  facet_wrap(~ metric, scales = "free")
-
-df_corp %>% 
-  select_if(is.numeric) %>% 
-  gather(metric, value) %>% 
-  ggplot(aes(value, fill = metric))+
-  geom_density(show.legend = FALSE) +
-  facet_wrap(~ metric, scales = "free")
-
-
-```
 Mia: Might mention that equity ratio stability seems to have exactly same distribution as equity ratio. We test for correlation etc etc and end up removing this variable moving forward. Saves some computation time for r when imputing.  
 
 # Imputation
@@ -330,10 +264,6 @@ df_cleaned <- complete_imputed
 
 ```
 
-```{r}
-
-```
-
 As shown in the distribtion plots, there is not much variation in the variables measuring paid and unpaid debt collection. We generate two new dummy variables that provide two binary measures of paid and unpaid debt. Moreover, 
 
 The table below shows how this variable is distributed. As shown, defaulting firms are more frequently represented among those with debt collection. Moreover, firms who have reported paying down previous debt are less frequently represented among defaulters.  
@@ -362,13 +292,19 @@ summary(df_cleaned)
 
 # Looking at the distribution again
 
+df_corp %>% 
+  select(which(sapply(.,class)=="numeric"),default) %>%   
+  gather(metric, value, -default) %>% 
+  ggplot(aes(x= default, y=value, fill = default))+
+  geom_boxplot(show.legend = FALSE) +
+  facet_wrap(~ metric, scales = "free")
+
 df_cleaned %>% 
   select_if(is.numeric) %>% 
   gather(metric, value) %>% 
   ggplot(aes(value, fill = metric))+
   geom_density(show.legend = FALSE) +
   facet_wrap(~ metric, scales = "free")
-
 
 ```
 
