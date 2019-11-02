@@ -51,10 +51,6 @@ df_corp %>%
   ggplot(aes(x = default, fill = default)) +
   geom_bar()
 
-<<<<<<< HEAD
-
-=======
->>>>>>> b740ac6b6e78ea57f6e890a4ef13a5df3b805f03
 ```
 
 Factor variables: ` "
@@ -98,7 +94,7 @@ df_corp$age_of_company <- as.numeric(df_corp$age_of_company)
 ```
 Let's have a look of the distribution of the variables in the data set. The figure below contains density plots for all the numeric variables. Due to the presence of outliers, these figures do not provide much information. 
 
-<<<<<<< HEAD
+
 ```{r}
 
 # We now look at the numerical classes
@@ -114,16 +110,12 @@ summary(df_corp)
 
 
 ```
-
-=======
->>>>>>> b740ac6b6e78ea57f6e890a4ef13a5df3b805f03
 #Handling missing observations and outliers
 
 We observe that the number xx appears throughout the data set, and assume that these are missing observations. In total, these extreme values account for xx percent of our observations. 
 
 
 We choose to replace these values with NA to begin with.  
-
 
 ```{r}
 # Take a closer look on the distribution of the values we belive is errors
