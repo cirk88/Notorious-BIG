@@ -1,6 +1,8 @@
 ---
 title: "191102exam"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -11,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r, include=FALSE}
+
 library(dplyr)
 library(magrittr)
 library(tidyr)
@@ -49,9 +52,14 @@ df_corp$default <- as.factor(df_corp$default)
 df_corp %>% 
   ggplot(aes(x = default, fill = default)) +
   geom_bar()
+
+
+
+
+
 ```
 
-Factor variables: 
+Factor variables: ` "
 Then we recategorize som of the factor variables. Adverse audit is coded as a dummy, where 1 indicates that there has been an adverse audit opinion, and 0 indicates no adverse audit.
 
 The tables below show the distribution of the companies along the factor variables, depending on wether they have defaulted or not.
@@ -375,7 +383,7 @@ The variables total_assets, revenue, industry and paid_debt_collection are remov
 
 
 
-```{r. include = F}
+```{r. include = FALSE}
 
 
 df_reduced <- df_cleaned
@@ -600,10 +608,4 @@ splom(resampling)
 xyplot(resampling, models=c("rf", "xgb"))
 
 summary(resampling)
-
-############################# xgboost without cleaning at all ##################################################
-  
-
-
-
 
