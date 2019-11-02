@@ -1,11 +1,11 @@
 ---
 title: "191102exam"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -25,6 +25,7 @@ library(ranger)
 library(xgboost)
 library(kableExtra) # just to make the output nicer
 library(mice)
+library(stargazer)
 
 theme_set(theme_bw()) 
 
@@ -44,6 +45,8 @@ Mia: make a nice summary table here
 ```{r, echo=FALSE}
 
 summary(df_corp)
+
+stargazer(df_corp, summary = TRUE)
 
 str(df_corp)
 
@@ -171,7 +174,7 @@ The figures below show the distribution after replacing xxx with NA. As shown, w
 
 (Show summary table here??)
 
-```{r results = 'asis'}
+```{r, results = 'asis'}
 
 knitr::kable(x[,1:3], caption = "test")
 
@@ -383,7 +386,7 @@ The variables total_assets, revenue, industry and paid_debt_collection are remov
 
 
 
-```{r. include = FALSE}
+```{r, include = FALSE}
 
 
 df_reduced <- df_cleaned
@@ -610,6 +613,4 @@ xyplot(resampling, models=c("rf", "xgb"))
 summary(resampling)
 
 
-
-HALLLAAA
 
