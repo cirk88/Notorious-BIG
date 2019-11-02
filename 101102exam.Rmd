@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## R Markdown
 
 
-```{r}
+```{r, include=FALSE}
 library(dplyr)
 library(magrittr)
 library(tidyr)
@@ -89,8 +89,8 @@ df_corp$revenue <- as.numeric(df_corp$revenue)
 df_corp$age_of_company <- as.numeric(df_corp$age_of_company)
 
 
-````
-Let's have a look of the distribution of the variables in the data set. The figure below contains desity plots for all the numeric variables. Due to the presence of outliers, these figures do not provide much information. 
+```
+Let's have a look of the distribution of the variables in the data set. The figure below contains density plots for all the numeric variables. Due to the presence of outliers, these figures do not provide much information. 
 
 ```{r, echo =F}
 
@@ -106,7 +106,7 @@ df_corp %>%
 summary(df_corp)
 
 
-````
+```
 
 #Handling missing observations and outliers
 
@@ -141,18 +141,25 @@ placeholder/nrow(df_corp)
 df_corp[df_corp < -1000000000000000] <- NA 
 df_corp[df_corp >  1000000000000000] <- NA
 
-````
+```
 
 ```{r}
 
 
-x <-df_corp %>%
+df_corp %>%
   select_if(anyNA) %>% 
   summary()
+
+x <- df_corp %>%
+  select_if(anyNA) %>% 
+  summary()
+
+
+
 ```
 
 
-The figures below shows the distribution after replacing xxx with NA. As shown, we still have an issue with outliers.
+The figures below show the distribution after replacing xxx with NA. As shown, we still have an issue with outliers.
 
 (Show summary table here??)
 
@@ -166,7 +173,7 @@ knitr::kable(x[,9], caption = "test")
 #knitr::kable(x[,16:20], caption = "test")
 #knitr::kable(x[,21:24], caption = "test")
 
-````
+```
 
 
 
@@ -197,7 +204,7 @@ df_corp %>%
 ```
 
 
-we assume that many of these values are error measurements. Applying a treshold of 2,5 percent at each end of the variables' distribution, we replace values exceeding this treshold with NAs. 
+We assume that many of these values are error measurements. Applying a treshold of 2,5 percent at each end of the variables' distribution, we replace values exceeding this treshold with NAs. 
 
 
 
@@ -281,10 +288,8 @@ As we have as much as xxx NA's, we choose not to delete these values, but rather
 The tables below show how the distributions change when we apply different imputation methods. (Blue line: original data, ???)
 
 
-```{r, echo = F}
+```{r, eval=F}
 
-
-########################################################## Impute the NA's with MICE package ####################################################
 
 df_corp <- df_corp %>% 
   select(-equity_ratio_stability) # Removed due to collinearity and if look at the earlier plots it make sense.
@@ -312,8 +317,15 @@ df_cleaned <- complete_imputed
 
 ```
 
+```{r, eval=T}
 
-As evident in the distribtion plots, there is not much variation in the variables measuring paid and unpaid debt collection. We generate two new dummy variables that provide two binary measures of paid and unpaid debt. Moreover, 
+```
+
+
+
+
+
+As shown in the distribtion plots, there is not much variation in the variables measuring paid and unpaid debt collection. We generate two new dummy variables that provide two binary measures of paid and unpaid debt. Moreover, 
 
 The table below shows how this variable is distributed. As shown, defaulting firms are more frequently represented among those with debt collection. Moreover, firms who have reported paying down previous debt are less frequently represented among defaulters.  
 
@@ -411,20 +423,13 @@ train_data <- train_data %>%
 # Secondly we check the correlation with the cateorized variables
 
 ```
+# Dealing with data imbalance
 
+As mentioned, defaulting firms are highly underrepresentated in the data set. We deal with this by implementing an undersamlpling technique with the MICE package.
 
-#################################################################
-#################################################################
-#################################################################
+```{r}
 
-
-
-
-
-
-
-#Dealing with oversaml
-
+#Dealing with oversampling
 
 
 ######################################### Making some models ########################################################
@@ -445,6 +450,13 @@ ctrl <- trainControl(method = "repeatedcv",
                      repeats = 10, 
                      verboseIter = FALSE,
                      sampling = "smote")
+
+
+```
+
+
+
+
 
 ########################################### Model 1: GLM ################################################################
 
@@ -590,8 +602,7 @@ xyplot(resampling, models=c("rf", "xgb"))
 summary(resampling)
 
 ############################# xgboost without cleaning at all ##################################################
-
-
+  
 
 
 
