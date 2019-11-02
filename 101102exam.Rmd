@@ -1,18 +1,18 @@
 ---
 title: "191102exam"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, echo = F}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE)
 ```
 
 ## R Markdown
 
 
-```{r, include=FALSE}
+```{r}
 
 library(dplyr)
 library(magrittr)
@@ -41,7 +41,7 @@ Mia: make a nice summary table here
 
 
 
-```{r, echo=FALSE}
+```{r}
 
 summary(df_corp)
 
@@ -100,7 +100,7 @@ df_corp$age_of_company <- as.numeric(df_corp$age_of_company)
 ```
 Let's have a look of the distribution of the variables in the data set. The figure below contains density plots for all the numeric variables. Due to the presence of outliers, these figures do not provide much information. 
 
-```{r, echo =F}
+```{r}
 
 # We now look on the numerical classes
 
@@ -125,7 +125,7 @@ We observe that the number xx appears throughout the data set, and assume that t
 We choose to replace these values with NA to begin with.  
 
 
-```{r, warning = F}
+```{r}
 # Take a closer look on the distribution of the values we belive is errors
 
 x <- df_corp %>% 
@@ -171,21 +171,9 @@ The figures below show the distribution after replacing xxx with NA. As shown, w
 
 (Show summary table here??)
 
-```{r results = 'asis'}
-
-knitr::kable(x[,1:3], caption = "test")
-
-knitr::kable(x[,4:6], caption = "test")
-
-knitr::kable(x[,9], caption = "test")
-#knitr::kable(x[,16:20], caption = "test")
-#knitr::kable(x[,21:24], caption = "test")
-
-```
 
 
-
-```{r, echo = F}
+```{r, eval = FALSE}
 
 
 # We take a new look after we changed the error with NA
@@ -258,7 +246,7 @@ df_corp$amount_unpaid_debt <- remove_outliers_na(df_corp$amount_unpaid_debt)
 
 
 
-```{r, echo = F}
+```{r}
 
 # Looking at the distribution again
 
@@ -278,16 +266,7 @@ df_corp %>%
 
 
 ```
-
-
-
-
-
 Mia: Might mention that equity ratio stability seems to have exactly same distribution as equity ratio. We test for correlation etc etc and end up removing this variable moving forward. Saves some computation time for r when imputing.  
-
-
-
-
 
 # Imputation
 
@@ -296,7 +275,7 @@ As we have as much as xxx NA's, we choose not to delete these values, but rather
 The tables below show how the distributions change when we apply different imputation methods. (Blue line: original data, ???)
 
 
-```{r, eval=F}
+```{r}
 
 
 df_corp <- df_corp %>% 
@@ -325,21 +304,15 @@ df_cleaned <- complete_imputed
 
 ```
 
-```{r, eval=T}
+```{r}
 
 ```
-
-
-
-
 
 As shown in the distribtion plots, there is not much variation in the variables measuring paid and unpaid debt collection. We generate two new dummy variables that provide two binary measures of paid and unpaid debt. Moreover, 
 
 The table below shows how this variable is distributed. As shown, defaulting firms are more frequently represented among those with debt collection. Moreover, firms who have reported paying down previous debt are less frequently represented among defaulters.  
 
 Mia: Might need to work on the reasoning behind generating this dummy a bit more. Could we do without it? 
-
-
 
 
 ```{r}
@@ -356,10 +329,9 @@ table2 <- table(df_cleaned$default, df_cleaned$paid_debt_collection)
 
 ```
 
-
 After cleaning, imputing and restructuring our data, our data set is better suited for prediciton modelling. 
 
-```{r, echo = F}
+```{r}
 summary(df_cleaned)
 
 # Looking at the distribution again
@@ -374,7 +346,6 @@ df_cleaned %>%
 
 ```
 
-
 #Modelling preparations
 A few more steps before we are ready to start modelling: 
 
@@ -383,8 +354,7 @@ The variables total_assets, revenue, industry and paid_debt_collection are remov
 
 
 
-```{r. include = FALSE}
-
+```{r}
 
 df_reduced <- df_cleaned
 
@@ -461,10 +431,6 @@ ctrl <- trainControl(method = "repeatedcv",
 
 
 ```
-
-
-
-
 
 ########################################### Model 1: GLM ################################################################
 
