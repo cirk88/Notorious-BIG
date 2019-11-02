@@ -29,6 +29,7 @@ library(kableExtra) # just to make the output nicer
 library(mice)
 library(stargazer)
 library(xtable)
+library(pROC)
 
 theme_set(theme_bw()) 
 
@@ -51,13 +52,9 @@ df_corp %>%
   ggplot(aes(x = default, fill = default)) +
   geom_bar()
 
-<<<<<<< HEAD
-
-=======
->>>>>>> b740ac6b6e78ea57f6e890a4ef13a5df3b805f03
 ```
 
-Factor variables: ` "
+Factor variables: 
 Then we recategorize som of the factor variables. Adverse audit is coded as a dummy, where 1 indicates that there has been an adverse audit opinion, and 0 indicates no adverse audit.
 
 The tables below show the distribution of the companies along the factor variables, depending on wether they have defaulted or not.
@@ -98,7 +95,7 @@ df_corp$age_of_company <- as.numeric(df_corp$age_of_company)
 ```
 Let's have a look of the distribution of the variables in the data set. The figure below contains density plots for all the numeric variables. Due to the presence of outliers, these figures do not provide much information. 
 
-<<<<<<< HEAD
+
 ```{r}
 
 # We now look at the numerical classes
@@ -115,8 +112,6 @@ summary(df_corp)
 
 ```
 
-=======
->>>>>>> b740ac6b6e78ea57f6e890a4ef13a5df3b805f03
 #Handling missing observations and outliers
 
 We observe that the number xx appears throughout the data set, and assume that these are missing observations. In total, these extreme values account for xx percent of our observations. 
@@ -266,6 +261,16 @@ densityplot(temp_imputed2, drop.unused.levels = TRUE)
 
 ```{r}
 temp_imputed2 <- readRDS(file = "impute.Rdata")
+
+
+### load images here
+
+
+```
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics('imputation_mean.jpeg')
+knitr::include_graphics('imputation_pmm.jpeg')
 ```
 
 
@@ -331,9 +336,6 @@ A few more steps before we are ready to start modelling:
 
 We split the data frame into a training and test set.
 The variables total_assets, revenue, industry and paid_debt_collection are removed as they correlate with other independent variables. 
-
-
-
 
 
 ```{r}
@@ -441,12 +443,12 @@ summary(model_glm)
 ```
 Comments:
 
-- what variables are significant?
-- do they make economically sense?
+- What variables are significant?
+- Do they make economically sense?
 
 
 The plot below shows the variable importance of the independent variables in the glm model. 
-- comments: what variables perform well
+- Comments: what variables perform well
 
 ```{r}
 plot(varImp(model_glm))
@@ -466,11 +468,13 @@ cm_glm
 
 ```
 
+Comments:
+Discuss the confusion matrix. 
+
+
 ```{r}
 
 # ROC curve glm
-
-library(pROC)
 
 result.predicted.prob <- predict(model_glm, test_data, type="prob") # Prediction
 
@@ -481,11 +485,17 @@ plot(result.roc, print.thres="best", print.thres.best.method="closest.topleft")
 result.coords <- coords(result.roc, "best", best.method="closest.topleft", ret=c("threshold", "accuracy"))
 print(result.coords)#to get threshold and accuracy
 
+```
 
-{}
 
 
-########################################### Model 2: Random Forest ######################################################
+# Random forest
+
+Our second predicion model is a random forest model.
+
+
+
+```{r}
 
 set.seed(1)
 
@@ -499,6 +509,10 @@ model_rf <- caret::train(default ~ .,
 
 model_rf <- readRDS("rf.Rdata")
 
+```
+
+```{r}
+
 plot(varImp(model_rf))
 
 rf_pred <- data.frame(actual = test_data$default,
@@ -508,6 +522,15 @@ rf_pred$predict <- as.factor(rf_pred$predict)
 
 cm_rf <- confusionMatrix(rf_pred$predict, test_data$default)
 cm_rf
+```
+
+Comments:
+About the confustion matrix
+How well the model performs relative to glm
+Accuracy, specificity and sensitivity etc.
+
+
+```{r, eval = false}
 
 # ROC curve rf
 
@@ -520,7 +543,16 @@ plot(result.roc, print.thres="best", print.thres.best.method="closest.topleft")
 result.coords <- coords(result.roc, "best", best.method="closest.topleft", ret=c("threshold", "accuracy"))
 print(result.coords)#to get threshold and accuracy
 
-############################################# Model 3: Xgboost #######################################################
+
+# Running the model is highly time consuming.
+#blablabla we run the saved file instead
+
+
+
+```
+#Model 3: Xgboost
+
+
 
 xgb_grid <- expand.grid(nrounds = 300,
                         max_depth = 6, #3
@@ -538,6 +570,8 @@ model_xgb <- caret::train(default ~ .,
                           tuneGrid =xgb_grid,
                           preProcess = c("scale", "center"),
                           trControl = ctrl)
+
+# Check preProcess - is this necessary, is it right, or is it wrong??
 
 # saveRDS(model_xgb, file = "xgb.Rdata")
 
