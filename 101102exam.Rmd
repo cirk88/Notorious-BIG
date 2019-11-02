@@ -119,7 +119,6 @@ We observe that the number xx appears throughout the data set, and assume that t
 
 We choose to replace these values with NA to begin with.  
 
-
 ```{r}
 # Take a closer look on the distribution of the values we belive is errors
 
@@ -280,8 +279,10 @@ knitr::include_graphics('imputation_pmm.jpeg')
 
 complete_imputed <- complete(temp_imputed2, 1)
 
-dim(df_corp)
-dim(complete_imputed)
+Orginal <- dim(df_corp)
+Imputed <- dim(complete_imputed)
+
+xtable(rbind(Orginal, Imputed))
 
 df_cleaned <- complete_imputed
 
@@ -306,12 +307,14 @@ df_cleaned$unpaid_debt_collection <- as.factor(df_cleaned$unpaid_debt_collection
 table1 <- table(df_cleaned$default, df_cleaned$unpaid_debt_collection)
 table2 <- table(df_cleaned$default, df_cleaned$paid_debt_collection)
 
+xtable(table1)
+xtable(table2)
+
 ```
 
 After cleaning, imputing and restructuring our data set is better suited for prediciton modelling, see density plots below. 
 
 ```{r}
-summary(df_cleaned)
 
 # Looking at the distribution again
 
@@ -392,10 +395,7 @@ As mentioned, defaulting firms are highly underrepresentated in the data set. We
 
 ```{r}
 
-#Dealing with oversampling
-
-
-######################################### Making some models ########################################################
+############# Making some models ###################
 
 library(grid)
 
@@ -413,7 +413,6 @@ ctrl <- trainControl(method = "repeatedcv",
                      repeats = 10, 
                      verboseIter = FALSE,
                      sampling = "smote")
-
 
 ```
 
@@ -489,6 +488,7 @@ print(result.coords)#to get threshold and accuracy
 
 
 
+<<<<<<< HEAD
 # Random forest
 
 Our second predicion model is a random forest model.
@@ -496,6 +496,9 @@ Our second predicion model is a random forest model.
 
 
 ```{r}
+=======
+########################################### Model 2: Random Forest ######################################################
+>>>>>>> 8653bc11aabe9d11aad0ddac724596bfcf24a0a4
 
 set.seed(1)
 
