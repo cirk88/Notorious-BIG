@@ -37,10 +37,6 @@ df_corp <- df
 An overview of the data shows us tha we have to change the structure of some of the variabels. Moreover, there are many extreme values in the data set and observations of defaulting companies are higly underrepresented in the data set. We will deal with all these problems prior to implementing our prediction models.  
 
 
-Mia: make a nice summary table here
-
-
-
 ```{r}
 
 summary(df_corp)
@@ -52,9 +48,6 @@ df_corp$default <- as.factor(df_corp$default)
 df_corp %>% 
   ggplot(aes(x = default, fill = default)) +
   geom_bar()
-
-
-
 
 
 ```
@@ -102,7 +95,7 @@ Let's have a look of the distribution of the variables in the data set. The figu
 
 ```{r}
 
-# We now look on the numerical classes
+# We now look at the numerical classes
 
 df_corp %>% 
   select_if(is.numeric) %>% 
@@ -278,8 +271,7 @@ Explain:
 - why imputation can introduce challenges 
 - 
 
-
-The tables below show how the distributions change when we apply different imputation methods. The original data is shown in the blue line, and the.
+The tables below show how the distributions change when we apply different imputation methods. The original data is shown in the blue line, the mean imoutation in xxx line, and the pmm method in the xxx line. 
 
 
 ```{r, include = FALSE}
@@ -455,7 +447,17 @@ ctrl <- trainControl(method = "repeatedcv",
 
 ```
 
-########################################### Model 1: GLM ################################################################
+#Model 1: GLM
+
+
+Our first prediction model is a logistic regression model. 
+- Some words about variable selection
+
+Summary statistics are presented below. 
+
+
+
+```{r}
 
 set.seed(1)
 
@@ -464,7 +466,26 @@ model_glm <- train(default ~.,
                    method = "glm",
                    trControl = ctrl)
 
+
+
+summary(model_glm)
+
+```
+Comments:
+
+- what variables are significant?
+- do they make economically sense?
+
+
+The plot below shows the variable importance of the independent variables in the glm model. 
+- comments: what variables perform well
+
+```{r}
 plot(varImp(model_glm))
+```
+
+
+```{r}
 
 glm_pred <- data.frame(actual = test_data$default,
                        predict(model_glm, newdata = test_data, type = "prob"))
@@ -475,7 +496,9 @@ glm_pred$predict <- as.factor(glm_pred$predict)
 cm_glm <-confusionMatrix(glm_pred$predict, test_data$default)
 cm_glm
 
-summary(model_glm)
+```
+
+```{r}
 
 # ROC curve glm
 
@@ -489,6 +512,10 @@ plot(result.roc, print.thres="best", print.thres.best.method="closest.topleft")
 
 result.coords <- coords(result.roc, "best", best.method="closest.topleft", ret=c("threshold", "accuracy"))
 print(result.coords)#to get threshold and accuracy
+
+
+{}
+
 
 ########################################### Model 2: Random Forest ######################################################
 
